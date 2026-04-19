@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1" />
+    <title>My Orders - Dashboard</title>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('dashboard') }}">Admin Dashboard</a>
+                {% endif %}
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+            <a href="{{ url_for('home') }}">Home</a>
+        </div>
+    </nav>
+
+    <section id="user-dashboard">
+        <div class="container">
+            <h1>My Orders</h1>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            {% if user_orders %}
+                <div class="orders-container">
+                    {% for order in user_orders %}
+                        <div class="order-card">
+                            <div class="order-header">
+                                <h3>Order #{{ order.id }}</h3>
+                                <span class="order-status status-{{ order.order_status.lower() }}">{{ order.order_status }}</span>
+                            </div>
+
+                            <div class="order-details">
+                                <div class="detail-row">
+                                    <span class="label">Worker:</span>
+                                    <span class="value">{{ order.worker }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">File:</span>
+                                    <span class="value">
+                                        <a href="{{ url_for('static', filename='uploads/' + order.file) }}" target="_blank">{{ order.file }}</a>
+                                    </span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Payment Status:</span>
+                                    <span class="value">{{ order.payment_status }}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Submitted:</span>
+                                    <span class="value">{{ order.timestamp if order.timestamp else 'N/A' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="order-actions">
+                                <button class="btn-secondary" onclick="toggleMessages({{ order.id }})">
+                                    💬 Messages ({{ order.messages|length if order.messages else 0 }})
+                                </button>
+                            </div>
+
+                            <div id="messages-{{ order.id }}" class="messages-section" style="display: none;">
+                                <div class="messages-list">
+                                    {% if order.messages %}
+                                        {% for message in order.messages %}
+                                            <div class="message {{ 'sent' if message.sender == current_user.username else 'received' }}">
+                                                <div class="message-header">
+                                                    <span class="message-sender">{{ message.sender_name if message.sender_name else message.sender }}</span>
+                                                    <span class="message-time">{{ message.timestamp if message.timestamp else 'N/A' }}</span>
+                                                </div>
+                                                <div class="message-content">{{ message.content }}</div>
+                                            </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <p class="no-messages">No messages yet. Start a conversation with your worker!</p>
+                                    {% endif %}
+                                </div>
+
+                                <div class="message-form">
+                                    <form method="POST" action="{{ url_for('send_message', order_id=order.id) }}">
+                                        <textarea name="message" placeholder="Type your message here..." required rows="3"></textarea>
+                                        <button type="submit" class="cta-button">Send Message</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="no-orders">
+                    <h2>No orders yet</h2>
+                    <p>You haven't placed any orders yet. <a href="{{ url_for('home') }}">Browse our services</a> to get started!</p>
+                </div>
+            {% endif %}
+        </div>
+    </section>
+
+    <script>
+        function toggleMessages(orderId) {
+            const messagesSection = document.getElementById('messages-' + orderId);
+            if (messagesSection.style.display === 'none' || messagesSection.style.display === '') {
+                messagesSection.style.display = 'block';
+            } else {
+                messagesSection.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

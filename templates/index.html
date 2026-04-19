@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+    <link rel="icon" sizes="16x16 32x32 48x48" type="image/png" href="/images/mlwicon.png" /> 
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1" />
+    <title>Sound Mix/Master Requisition</title>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('logout') }}">Logout</a>
+                {% if current_user.is_admin %}
+                    <a href="{{ url_for('dashboard') }}">Admin Dashboard</a>
+                {% endif %}
+                <a href="{{ url_for('user_dashboard') }}">My Orders</a>
+            {% else %}
+                <a href="{{ url_for('login') }}">Login</a>
+            {% endif %}
+        </div>
+    </nav>
+    
+    <section id="homepage">
+        <div class="container">
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endwith %}
+            <img src="https://via.placeholder.com/800x400?text=Project+Image" alt="Project Image" class="hero-image">
+            <h1>Welcome to Sound Mix/Master Services</h1>
+            <p>Our project specializes in professional sound mixing and mastering for music productions, podcasts, and audio content. We provide high-quality audio engineering services to bring your sound to life with precision and creativity.</p>
+        </div>
+    </section>
+    
+    <section id="workers">
+        <div class="container">
+            <h2>Our Professionals</h2>
+            <div class="worker">
+                <img src="{{ url_for('static', filename='images/alex.jpg') }}" alt="Worker 1" class="worker-image">
+                <div class="worker-info">
+                    <h3>Alexandre Taborda</h3>
+                    <p>Expert sound engineer with over 10 years of experience in mixing and mastering. Specializes in rock and electronic music.</p>
+                    <button class="select-worker-btn" data-worker="Alexandre Taborda" data-desc="Expert sound engineer with over 10 years of experience in mixing and mastering. Specializes in rock and electronic music." data-contact="john@example.com | Phone: (351) 456-7890">Select Services</button>
+                    <p>Contact: john@example.com | Phone: (351) 456-7890</p>
+                </div>
+            </div>
+            <div class="worker">
+                <img src="https://via.placeholder.com/300x300?text=Worker+2" alt="Worker 2" class="worker-image">
+                <div class="worker-info">
+                    <h3>Joao Silva</h3>
+                    <p>Mastering specialist known for her work in classical and jazz genres. Ensures your audio reaches its full potential.</p>
+                    <button class="select-worker-btn" data-worker="Joao Silva" data-desc="Mastering specialist known for her work in classical and jazz genres. Ensures your audio reaches its full potential." data-contact="jane@example.com | Phone: (351) 456-7891">Select Services</button>
+                    <p>Contact: jane@example.com | Phone: (351) 456-7891</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        var selectButtons = document.getElementsByClassName('select-worker-btn');
+        for (var i = 0; i < selectButtons.length; i++) {
+            selectButtons[i].addEventListener('click', function() {
+                console.log('Button clicked');
+                var workerName = this.getAttribute('data-worker');
+                console.log('Worker name:', workerName);
+                window.location.href = '/worker/' + encodeURIComponent(workerName);
+            });
+        }
+    </script>
+    </script>
+</body>
+</html>

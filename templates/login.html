@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=1" />
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}">Home</a>
+        </div>
+    </nav>
+
+    <section>
+        <div class="container">
+            <h1>Login to Your Account</h1>
+            {% with messages = get_flashed_messages() %}
+                {% if messages %}
+                    <div class="flash-messages">
+                        {% for message in messages %}
+                            <p>{{ message }}</p>
+                        {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <form method="POST" style="max-width: 400px; margin: 0 auto; text-align: left;">
+                <div style="margin-bottom: 20px;">
+                    <label for="username" style="display: block; margin-bottom: 8px; font-weight: 500;">Username:</label>
+                    <input type="text" id="username" name="username" required
+                           style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 1rem;">
+                </div>
+
+                <div style="margin-bottom: 24px;">
+                    <label for="password" style="display: block; margin-bottom: 8px; font-weight: 500;">Password:</label>
+                    <input type="password" id="password" name="password" required
+                           style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-size: 1rem;">
+                </div>
+
+                <button type="submit" class="cta-button" style="width: 100%;">Login</button>
+            </form>
+        </div>
+    </section>
+</body>
+</html>
